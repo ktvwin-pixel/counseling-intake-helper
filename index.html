@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>초기 상담 신청서</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="app-header">
+        <div class="brand-block">
+          <img class="brand-logo" src="assets/institute-logo.png" alt="한 예술치료교육연구소" />
+          <div>
+            <p class="eyebrow">한 예술치료교육연구소 초기 접수</p>
+            <h1>초기 내담자 상담 신청서</h1>
+          </div>
+        </div>
+        <p class="header-note">작성 내용은 상담 준비와 일정 안내를 위해 접수 메일로 전송됩니다.</p>
+      </header>
+
+      <form
+        id="intakeForm"
+        class="intake-form"
+        action="https://formsubmit.co/osm0707@naver.com"
+        method="POST"
+      >
+        <input type="hidden" name="_subject" value="초기 내담자 상담 신청서 접수" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" id="summaryField" name="상담_신청_요약" />
+
+        <section class="form-section">
+          <div class="section-title">
+            <span>01</span>
+            <h2>기본 정보</h2>
+          </div>
+          <div class="field-grid">
+            <label>
+              성명
+              <input name="성명" autocomplete="name" required />
+            </label>
+            <label>
+              연락처
+              <input name="연락처" type="tel" autocomplete="tel" required />
+            </label>
+            <label>
+              이메일
+              <input name="이메일" type="email" autocomplete="email" />
+            </label>
+            <label>
+              나이
+              <input name="나이" type="number" min="1" max="120" required />
+            </label>
+            <label>
+              직업
+              <input name="직업" required />
+            </label>
+            <label>
+              현재 업무 근무 기간
+              <input name="현재 업무 근무 기간" placeholder="예: 2년 6개월" />
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-title">
+            <span>02</span>
+            <h2>상담 배경</h2>
+          </div>
+          <div class="field-stack">
+            <fieldset>
+              <legend>상담 내용 키워드</legend>
+              <div class="choice-grid">
+                <label><input type="checkbox" name="상담 내용 키워드" value="불안/공황" /> 불안/공황</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="우울/무기력" /> 우울/무기력</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="스트레스/번아웃" /> 스트레스/번아웃</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="대인관계" /> 대인관계</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="가족/부부/연인" /> 가족/부부/연인</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="진로/직장" /> 진로/직장</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="자존감/성격" /> 자존감/성격</label>
+                <label><input type="checkbox" name="상담 내용 키워드" value="트라우마/상실" /> 트라우마/상실</label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>상담 경험 유무</legend>
+              <div class="inline-choices">
+                <label><input type="radio" name="상담 경험 유무" value="있음" required /> 있음</label>
+                <label><input type="radio" name="상담 경험 유무" value="없음" /> 없음</label>
+              </div>
+            </fieldset>
+
+            <label>
+              상담을 결정한 이유
+              <textarea name="상담을 결정한 이유" rows="4" required></textarea>
+            </label>
+            <label>
+              가장 심각한 증상
+              <textarea name="가장 심각한 증상" rows="4" required></textarea>
+            </label>
+            <label>
+              상담을 통해 얻고 싶은 결과
+              <textarea name="상담을 통해 얻고 싶은 결과" rows="4" required></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-title">
+            <span>03</span>
+            <h2>건강 및 복용 정보</h2>
+          </div>
+          <div class="field-grid">
+            <label>
+              약물 복용 여부
+              <select name="약물 복용 여부" required>
+                <option value="">선택</option>
+                <option>복용 중</option>
+                <option>과거 복용 경험 있음</option>
+                <option>복용 경험 없음</option>
+              </select>
+            </label>
+            <label>
+              약물 복용 기간
+              <input name="약물 복용 기간" placeholder="예: 6개월 / 해당 없음" />
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-title">
+            <span>04</span>
+            <h2>방문 과정 및 동의</h2>
+          </div>
+          <div class="field-stack">
+            <fieldset>
+              <legend>방문 과정</legend>
+              <div class="inline-choices">
+                <label><input type="radio" name="방문 과정" value="소개" required /> 소개</label>
+                <label><input type="radio" name="방문 과정" value="인터넷 검색" /> 인터넷 검색</label>
+                <label><input type="radio" name="방문 과정" value="SNS 검색" /> SNS 검색</label>
+              </div>
+            </fieldset>
+
+            <label class="check-line">
+              <input type="checkbox" name="초기 전화상담 동의 여부" value="동의" required />
+              초기 전화상담 진행에 동의합니다.
+            </label>
+            <label class="check-line">
+              <input type="checkbox" name="상담진행중 전화상담 유료 안내 동의" value="동의" required />
+              상담 진행 중 전화상담은 유료로 진행됨을 안내받았고 이에 동의합니다.
+            </label>
+          </div>
+        </section>
+
+        <section class="submission-panel">
+          <div>
+            <strong>수신 메일</strong>
+            <span>osm0707@naver.com</span>
+          </div>
+          <div class="actions">
+            <button class="secondary-button" type="button" id="mailClientButton">메일 앱으로 열기</button>
+            <button class="primary-button" type="submit">기록 작성 후 전송</button>
+          </div>
+        </section>
+      </form>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
