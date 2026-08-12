@@ -85,7 +85,7 @@ function apiRequest(params) {
     script.onerror = () => {
       delete window[callbackName];
       script.remove();
-      reject(new Error("서버 연결에 실패했습니다."));
+      reject(new Error("서버 연결에 실패했습니다. Apps Script 웹 앱 액세스 권한을 '모든 사용자'로 설정해 주세요."));
     };
 
     script.src = url.toString();
