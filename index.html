@@ -3,32 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>초기 상담 신청서</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <title>초기 내담자 상담 신청서</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="page-shell">
       <header class="app-header">
         <div class="brand-block">
-          <img class="brand-logo" src="assets/institute-logo.png" alt="한 예술치료교육연구소" />
+          <img class="brand-logo" src="assets/institute-logo.png" alt="한예술치료교육연구소" />
           <div>
-            <p class="eyebrow">한 예술치료교육연구소 초기 접수</p>
+            <p class="eyebrow">개별 안내 링크 전용</p>
             <h1>초기 내담자 상담 신청서</h1>
           </div>
         </div>
-        <p class="header-note">작성 내용은 상담 준비와 일정 안내를 위해 접수 메일로 전송됩니다.</p>
+        <p class="header-note">
+          본 신청서는 상담 안내 문자를 받은 분의 초기 접수를 위한 비공개 안내형 페이지입니다.
+        </p>
       </header>
 
-      <form
-        id="intakeForm"
-        class="intake-form"
-        action="https://formsubmit.co/osm0707@naver.com"
-        method="POST"
-      >
+      <form id="intakeForm" class="intake-form">
         <input type="hidden" name="_subject" value="초기 내담자 상담 신청서 접수" />
         <input type="hidden" name="_template" value="table" />
         <input type="hidden" name="_captcha" value="false" />
         <input type="hidden" id="summaryField" name="상담_신청_요약" />
+        <input type="hidden" id="applicantNoField" name="고유번호" />
+
+        <section class="form-section access-notice">
+          <div class="section-title">
+            <span>안내</span>
+            <h2>개별 접수 안내</h2>
+          </div>
+          <div class="field-stack">
+            <p>
+              이 페이지는 공개 모집용 페이지가 아니라, 상담 신청 안내 문자를 개별로 받은 분이 자신의 정보를 입력해 회신하는 신청서입니다.
+              작성 내용은 상담 접수 관리용 Google Sheets와 Google Drive의 개인 고유번호 폴더에 저장됩니다.
+            </p>
+            <label class="check-line">
+              <input type="checkbox" name="개별 안내 링크 확인" value="확인" required />
+              상담기관에서 개별 안내받은 신청 링크로 접속했음을 확인합니다.
+            </label>
+          </div>
+        </section>
 
         <section class="form-section">
           <div class="section-title">
@@ -63,9 +79,47 @@
           </div>
         </section>
 
-        <section class="form-section">
+        <section class="form-section priority-section">
           <div class="section-title">
             <span>02</span>
+            <h2>심리검사지 활용</h2>
+          </div>
+          <div class="field-stack">
+            <fieldset>
+              <legend>초기 상담 과정에서 심리검사지를 활용할 의사가 있으신가요?</legend>
+              <div class="inline-choices">
+                <label><input type="radio" name="검사지 선택 사용 여부" value="사용 희망" required /> 사용 희망</label>
+                <label><input type="radio" name="검사지 선택 사용 여부" value="사용 원하지 않음" /> 원하지 않음</label>
+                <label><input type="radio" name="검사지 선택 사용 여부" value="상담 후 결정" /> 상담 후 결정</label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>원하는 검사지를 선택해 주세요. 복수 선택이 가능합니다.</legend>
+              <div class="choice-grid test-choice-grid">
+                <label><input type="checkbox" name="초기 선택 검사지" value="MMPI-2 / MMPI-A" /> MMPI-2 / MMPI-A</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="TCI / JTCI" /> TCI / JTCI</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="SCT 문장완성검사" /> SCT 문장완성검사</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="HTP 그림검사" /> HTP 그림검사</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="KFD 동적가족화" /> KFD 동적가족화</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="BGT 벤더게슈탈트검사" /> BGT 벤더게슈탈트검사</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="Rorschach 로르샤흐 검사" /> Rorschach</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="TAT / CAT 주제통각검사" /> TAT / CAT</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="K-WAIS / K-WISC 지능검사" /> K-WAIS / K-WISC</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="BDI 우울척도" /> BDI 우울척도</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="BAI 불안척도" /> BAI 불안척도</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="K-CBCL / K-YSR" /> K-CBCL / K-YSR</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="PAI 성격평가질문지" /> PAI</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="MBTI" /> MBTI</label>
+                <label><input type="checkbox" name="초기 선택 검사지" value="기타" /> 기타</label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-title">
+            <span>03</span>
             <h2>상담 배경</h2>
           </div>
           <div class="field-stack">
@@ -108,7 +162,7 @@
 
         <section class="form-section">
           <div class="section-title">
-            <span>03</span>
+            <span>04</span>
             <h2>건강 및 복용 정보</h2>
           </div>
           <div class="field-grid">
@@ -130,7 +184,7 @@
 
         <section class="form-section">
           <div class="section-title">
-            <span>04</span>
+            <span>05</span>
             <h2>방문 과정 및 동의</h2>
           </div>
           <div class="field-stack">
@@ -149,24 +203,27 @@
             </label>
             <label class="check-line">
               <input type="checkbox" name="상담진행중 전화상담 유료 안내 동의" value="동의" required />
-              상담 진행 중 전화상담은 유료로 진행됨을 안내받았고 이에 동의합니다.
+              상담 진행 중 전화상담은 유료로 진행될 수 있음을 안내받았고 이에 동의합니다.
             </label>
           </div>
         </section>
 
         <section class="submission-panel">
           <div>
-            <strong>수신 메일</strong>
-            <span>osm0707@naver.com</span>
+            <strong>접수 저장소</strong>
+            <span>Google Sheets 및 Google Drive 개인 폴더 저장</span>
           </div>
           <div class="actions">
+            <a class="secondary-link" href="admin.html">관리자 로그인</a>
             <button class="secondary-button" type="button" id="mailClientButton">메일 앱으로 열기</button>
-            <button class="primary-button" type="submit">기록 작성 후 전송</button>
+            <button class="primary-button" type="submit">기록 작성 및 전송</button>
           </div>
         </section>
+        <p id="submitMessage" class="form-message" role="status"></p>
       </form>
     </main>
 
+    <script src="config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

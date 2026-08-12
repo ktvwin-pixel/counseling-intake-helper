@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>관리자 신청자 관리</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="app-header">
+        <div class="brand-block">
+          <img class="brand-logo" src="assets/institute-logo.png" alt="한 예술치료교육연구소" />
+          <div>
+            <p class="eyebrow">관리자 전용</p>
+            <h1>상담 신청자 정보 관리</h1>
+          </div>
+        </div>
+        <p class="header-note">로그인 후 신청 기록을 확인하고 엑셀 파일로 저장할 수 있습니다.</p>
+      </header>
+
+      <section id="loginPanel" class="form-section admin-panel">
+        <div class="section-title">
+          <span>관리</span>
+          <h2>관리자 로그인</h2>
+        </div>
+        <form id="adminLoginForm" class="field-stack">
+          <label>
+            관리자 아이디
+            <input id="adminId" autocomplete="username" required />
+          </label>
+          <label>
+            관리자 비밀번호
+            <input id="adminPassword" type="password" autocomplete="current-password" required />
+          </label>
+          <p id="loginMessage" class="form-message" role="alert"></p>
+          <div class="actions">
+            <a class="secondary-link" href="index.html">신청서로 이동</a>
+            <button class="primary-button" type="submit">로그인</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="recordsPanel" class="records-panel" hidden>
+        <div class="records-toolbar">
+          <div>
+            <p class="eyebrow">신청자 목록</p>
+            <h2>일괄 관리</h2>
+          </div>
+          <div class="actions">
+            <button class="secondary-button" type="button" id="logoutButton">로그아웃</button>
+            <button class="secondary-button" type="button" id="deleteSelectedButton">선택 삭제</button>
+            <button class="primary-button" type="button" id="exportButton">엑셀 저장</button>
+            <button class="primary-button" type="button" id="emailButton" disabled>나에게 메일 보내기</button>
+          </div>
+        </div>
+
+        <p class="admin-note">
+          Google Sheets에 저장된 신청 기록을 조회하고 선택 삭제, 엑셀 메일 전송을 진행합니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAll" aria-label="전체 선택" /></th>
+                <th>고유번호</th>
+                <th>상태</th>
+                <th>작성 일시</th>
+                <th>성명</th>
+                <th>연락처</th>
+                <th>나이</th>
+                <th>직업</th>
+                <th>상담 키워드</th>
+                <th>방문 과정</th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+
+        <article id="detailPanel" class="detail-panel" hidden>
+          <div class="detail-heading">
+            <h2>상세 정보</h2>
+            <div class="actions">
+              <button class="secondary-button" type="button" id="copyDetailButton">복사</button>
+              <button class="secondary-button" type="button" id="printDetailButton">프린트</button>
+            </div>
+          </div>
+          <div id="printArea">
+            <dl id="detailList"></dl>
+
+            <section class="admin-workspace">
+              <div class="workspace-section">
+                <h3>치료일지 작성</h3>
+                <form id="journalForm" class="field-stack">
+                  <input type="hidden" name="고유번호" />
+                  <div class="field-grid">
+                    <label>회기<input name="회기" type="number" min="1" placeholder="예: 1" required /></label>
+                    <label>상담일자<input name="상담일자" type="date" required /></label>
+                    <label>상담시간<input name="상담시간" placeholder="예: 50분" /></label>
+                    <label>
+                      상담형태
+                      <select name="상담형태">
+                        <option>개인상담</option>
+                        <option>부부/가족상담</option>
+                        <option>아동/청소년상담</option>
+                        <option>전화상담</option>
+                        <option>온라인상담</option>
+                      </select>
+                    </label>
+                    <label>상담자<input name="상담자" /></label>
+                    <label>정서상태<input name="정서상태" placeholder="예: 불안, 우울, 긴장" /></label>
+                  </div>
+                  <label>주호소/주제<textarea name="주호소/주제" rows="3" required></textarea></label>
+                  <label>상담 목표<textarea name="상담 목표" rows="3"></textarea></label>
+                  <label>개입 내용<textarea name="개입 내용" rows="4" required></textarea></label>
+                  <label>내담자 반응<textarea name="내담자 반응" rows="3"></textarea></label>
+                  <label>진전 및 변화<textarea name="진전 및 변화" rows="3"></textarea></label>
+                  <label>위험도/특이사항<textarea name="위험도/특이사항" rows="3"></textarea></label>
+                  <label>과제/권고<textarea name="과제/권고" rows="3"></textarea></label>
+                  <label>다음 계획<textarea name="다음 계획" rows="3"></textarea></label>
+                  <label>검사 결과 반영<textarea name="검사 결과 반영" rows="3" placeholder="검사결과 탭에 입력한 결과 요약을 치료일지에 반영하세요."></textarea></label>
+                  <div class="actions">
+                    <button class="secondary-button" type="button" id="copyJournalButton">치료일지 복사</button>
+                    <button class="secondary-button" type="button" id="printJournalButton">치료일지 프린트</button>
+                    <button class="primary-button" type="submit">치료일지 저장</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="workspace-section">
+                <h3>검사 결과 입력</h3>
+                <form id="testForm" class="field-stack">
+                  <input type="hidden" name="고유번호" />
+                  <div class="field-grid">
+                    <label>
+                      검사지 종류
+                      <select name="검사지 종류" id="testTypeSelect"></select>
+                    </label>
+                    <label>
+                      사용 여부
+                      <select name="사용 여부">
+                        <option>사용</option>
+                        <option>미사용</option>
+                        <option>보류</option>
+                      </select>
+                    </label>
+                    <label>검사일<input name="검사일" type="date" /></label>
+                    <label>
+                      결과 입력 방식
+                      <select name="결과 입력 방식">
+                        <option>숫자</option>
+                        <option>이미지/파일 URL</option>
+                        <option>숫자 + 이미지/파일 URL</option>
+                      </select>
+                    </label>
+                    <label>숫자 결과<input name="숫자 결과" placeholder="예: T=68 / 42점" /></label>
+                    <label>이미지/파일 URL<input name="이미지/파일 URL" type="url" placeholder="Google Drive 이미지 또는 파일 링크" /></label>
+                  </div>
+                  <label>결과 요약<textarea name="결과 요약" rows="4"></textarea></label>
+                  <div class="actions">
+                    <button class="primary-button" type="submit">검사 결과 저장</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="workspace-section">
+                <h3>최종 상담 종료</h3>
+                <form id="closeForm" class="field-stack">
+                  <div class="field-grid">
+                    <label>
+                      최종 상담 이후 파일 처리
+                      <select name="preserve">
+                        <option value="보존">보존</option>
+                        <option value="삭제">삭제</option>
+                        <option value="이관">이관</option>
+                      </select>
+                    </label>
+                    <label>이관 대상<input name="transferTarget" placeholder="이관 시 기관/담당자" /></label>
+                    <label>관리자<input name="admin" /></label>
+                  </div>
+                  <label>비고<textarea name="memo" rows="3"></textarea></label>
+                  <div class="actions">
+                    <button class="primary-button" type="submit">해당 번호 최종 상담 종료</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="workspace-section">
+                <h3>저장된 치료일지 및 검사결과</h3>
+                <div id="relatedRecords" class="related-records"></div>
+              </div>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
