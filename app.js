@@ -5,6 +5,33 @@ const mailClientButton = document.querySelector("#mailClientButton");
 const submitMessage = document.querySelector("#submitMessage");
 const config = window.APP_CONFIG || {};
 const recipient = config.recipient || "hanart73@gmail.com";
+const accessCode = config.accessCode || "";
+
+function hasValidAccessCode() {
+  if (!accessCode) return true;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("code") === accessCode;
+}
+
+function lockFormForInvalidAccess() {
+  if (hasValidAccessCode()) return;
+
+  form.querySelectorAll("input, select, textarea, button").forEach((element) => {
+    element.disabled = true;
+  });
+  const notice = document.createElement("section");
+  notice.className = "form-section access-denied";
+  notice.innerHTML = `
+    <div class="section-title">
+      <span>확인</span>
+      <h2>개별 안내 링크 확인 필요</h2>
+    </div>
+    <div class="field-stack">
+      <p>상담기관에서 문자로 안내받은 전용 링크로 다시 접속해 주세요.</p>
+    </div>
+  `;
+  form.prepend(notice);
+}
 
 function collectFormData() {
   const data = new FormData(form);
@@ -143,3 +170,5 @@ mailClientButton.addEventListener("click", () => {
   const applicantNo = ensureApplicantNo();
   openMailFallback(applicantNo);
 });
+
+lockFormForInvalidAccess();
