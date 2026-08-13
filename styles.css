@@ -231,7 +231,7 @@ h1 {
 
 .journal-cell-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -243,8 +243,12 @@ h1 {
   padding: 12px;
 }
 
-.journal-cell-grid .wide-cell {
-  grid-column: 1 / -1;
+.journal-cell-grid textarea {
+  min-height: 132px;
+}
+
+.journal-cell-grid .wide-cell textarea {
+  min-height: 164px;
 }
 
 label,
@@ -704,9 +708,6 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 
-  .journal-cell-grid .wide-cell {
-    grid-column: auto;
-  }
 }
 
 @media print {

@@ -338,41 +338,61 @@ function formatRecordTable(title, rows, columns, emphasis = []) {
   `;
 }
 
-function formatJournalCell(label, value, options = {}) {
-  const classes = ["journal-print-cell"];
-  if (options.wide) classes.push("wide");
+function formatJournalMetaCell(label, value) {
+  return `
+    <tr>
+      <th>${escapeHtml(label)}</th>
+      <td>${escapeHtml(value || " ")}</td>
+    </tr>
+  `;
+}
+
+function formatJournalBlock(label, value, options = {}) {
+  const classes = ["journal-block"];
   if (options.emphasis) classes.push("emphasis");
 
   return `
     <div class="${classes.join(" ")}">
-      <div class="journal-print-label">${escapeHtml(label)}</div>
-      <div class="journal-print-value">${escapeHtml(value || " ")}</div>
+      <h4>${escapeHtml(label)}</h4>
+      <div>${escapeHtml(value || " ")}</div>
     </div>
   `;
 }
 
 function formatJournalSheet(row, title = "치료일지") {
   const metaItems = ["고유번호", "회기", "상담일자", "상담시간", "상담형태", "상담자", "정서상태"];
-  const contentItems = [
-    ["주호소/주제", true],
-    ["상담 목표", false],
-    ["개입 내용", true],
-    ["내담자 반응", false],
-    ["진전 및 변화", false],
-    ["위험도/특이사항", false],
-    ["과제/권고", false],
-    ["다음 계획", true],
-    ["검사 결과 반영", true],
-  ];
 
   return `
     <section class="print-section journal-print-sheet">
       <h2>${escapeHtml(title)}</h2>
-      <div class="journal-print-grid meta-grid">
-        ${metaItems.map((key) => formatJournalCell(key, row?.[key])).join("")}
-      </div>
-      <div class="journal-print-grid content-grid">
-        ${contentItems.map(([key, emphasis]) => formatJournalCell(key, row?.[key], { wide: true, emphasis })).join("")}
+      <table class="journal-meta-table">
+        <tbody>
+          ${metaItems.map((key) => formatJournalMetaCell(key, row?.[key])).join("")}
+        </tbody>
+      </table>
+      <div class="journal-flow">
+        <div class="journal-group">
+          <h3>1. 상담 초점</h3>
+          ${formatJournalBlock("주호소/주제", row?.["주호소/주제"], { emphasis: true })}
+          ${formatJournalBlock("상담 목표", row?.["상담 목표"])}
+        </div>
+        <div class="journal-group">
+          <h3>2. 상담 진행 기록</h3>
+          ${formatJournalBlock("개입 내용", row?.["개입 내용"], { emphasis: true })}
+          <div class="journal-pair">
+            ${formatJournalBlock("내담자 반응", row?.["내담자 반응"])}
+            ${formatJournalBlock("진전 및 변화", row?.["진전 및 변화"])}
+          </div>
+        </div>
+        <div class="journal-group">
+          <h3>3. 평가 및 향후 계획</h3>
+          <div class="journal-pair">
+            ${formatJournalBlock("위험도/특이사항", row?.["위험도/특이사항"])}
+            ${formatJournalBlock("과제/권고", row?.["과제/권고"])}
+          </div>
+          ${formatJournalBlock("다음 계획", row?.["다음 계획"], { emphasis: true })}
+          ${formatJournalBlock("검사 결과 반영", row?.["검사 결과 반영"], { emphasis: true })}
+        </div>
       </div>
     </section>
   `;
@@ -448,42 +468,79 @@ function printDocument(title, bodyHtml) {
             padding: 12px;
             background: #ffffff;
           }
-          .journal-print-grid {
+          .journal-meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+          }
+          .journal-meta-table tbody {
             display: grid;
-            gap: 0;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             border-top: 1px solid #aeb8c8;
             border-left: 1px solid #aeb8c8;
           }
-          .meta-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            margin-bottom: 12px;
+          .journal-meta-table tr {
+            display: grid;
+            grid-template-columns: 86px minmax(0, 1fr);
           }
-          .content-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-          .journal-print-cell {
-            min-height: 74px;
+          .journal-meta-table th,
+          .journal-meta-table td {
+            border: 0;
             border-right: 1px solid #aeb8c8;
             border-bottom: 1px solid #aeb8c8;
-            background: #ffffff;
+            padding: 7px 8px;
+            min-height: 36px;
           }
-          .journal-print-cell.wide {
-            min-height: 112px;
-          }
-          .journal-print-cell.emphasis .journal-print-value {
-            font-weight: 800;
-          }
-          .journal-print-label {
-            padding: 7px 9px;
+          .journal-meta-table th {
+            width: auto;
             color: #7d1f50;
             background: #f8bfd1;
             font-size: 12px;
-            font-weight: 800;
           }
-          .journal-print-value {
-            min-height: 42px;
-            padding: 9px;
+          .journal-flow {
+            display: grid;
+            gap: 14px;
+          }
+          .journal-group {
+            border: 1px solid #aeb8c8;
+            page-break-inside: avoid;
+          }
+          .journal-group h3 {
+            margin: 0;
+            padding: 8px 10px;
+            color: #ffffff;
+            background: #7d1f50;
+            font-size: 14px;
+          }
+          .journal-pair {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            border-top: 1px solid #aeb8c8;
+          }
+          .journal-block {
+            min-height: 118px;
+            padding: 12px 13px;
+            background: #fff8fb;
             white-space: pre-wrap;
+          }
+          .journal-block + .journal-block {
+            border-top: 1px solid #aeb8c8;
+          }
+          .journal-pair .journal-block + .journal-block {
+            border-top: 0;
+            border-left: 1px solid #aeb8c8;
+          }
+          .journal-block h4 {
+            margin: 0 0 8px;
+            color: #7d1f50;
+            font-size: 13px;
+          }
+          .journal-block div {
+            min-height: 74px;
+            white-space: pre-wrap;
+          }
+          .journal-block.emphasis div {
+            font-weight: 800;
           }
           .emphasis-row td,
           .solution-box {
