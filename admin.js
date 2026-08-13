@@ -51,6 +51,10 @@ let activeId = "";
 let activeBundle = null;
 let testTypes = [];
 
+function setRecordsMessage(message) {
+  recordsBody.innerHTML = `<tr><td colspan="10" class="empty-cell">${escapeHtml(message)}</td></tr>`;
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -148,6 +152,7 @@ function renderRecords() {
 }
 
 async function loadRecords() {
+  setRecordsMessage("신청자 정보를 불러오는 중입니다.");
   const payload = await apiRequest({ action: "list", token: getToken() });
   records = payload.records || [];
   testTypes = payload.testTypes || testTypes;
@@ -162,16 +167,22 @@ function fillTestOptions() {
 function showAdmin() {
   loginPanel.hidden = true;
   recordsPanel.hidden = false;
+  detailPanel.hidden = true;
+  setStatus("", "info");
   loadRecords().catch((error) => {
     sessionStorage.removeItem("hanAdminToken");
     loginPanel.hidden = false;
     recordsPanel.hidden = true;
+    detailPanel.hidden = true;
     setStatus(error.message, "error");
   });
 }
 
 async function showDetail(id) {
   activeId = id;
+  detailPanel.hidden = false;
+  detailList.innerHTML = "<div><dt>상태</dt><dd>선택한 신청 내용을 불러오는 중입니다.</dd></div>";
+  relatedRecords.innerHTML = "";
   const payload = await apiRequest({ action: "bundle", token: getToken(), id });
   activeBundle = payload;
 
@@ -209,11 +220,13 @@ function renderRelated(bundle) {
 }
 
 function renderJournalCard(row) {
+  const encoded = encodeURIComponent(JSON.stringify(row));
   return `
-    <article class="mini-record">
+    <article class="mini-record" data-journal="${escapeHtml(encoded)}">
       <strong>${escapeHtml(row["상담일자"])} ${escapeHtml(row["회기"])}회기</strong>
       <p>${escapeHtml(row["주호소/주제"])}</p>
       <p>${escapeHtml(row["검사 결과 반영"])}</p>
+      <button class="text-button edit-journal-button" type="button">이 일지 수정/보완</button>
     </article>
   `;
 }
@@ -317,6 +330,22 @@ loginForm.addEventListener("submit", async (event) => {
 recordsBody.addEventListener("click", (event) => {
   const detailButton = event.target.closest(".detail-button");
   if (detailButton) showDetail(detailButton.closest("tr").dataset.id);
+});
+
+relatedRecords.addEventListener("click", (event) => {
+  const editButton = event.target.closest(".edit-journal-button");
+  if (!editButton) return;
+
+  const card = editButton.closest("[data-journal]");
+  if (!card) return;
+
+  const row = JSON.parse(decodeURIComponent(card.dataset.journal));
+  Object.entries(row).forEach(([key, value]) => {
+    const field = journalForm.elements[key];
+    if (field) field.value = value || "";
+  });
+  journalForm.elements["고유번호"].value = activeId;
+  journalForm.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 recordsBody.addEventListener("change", () => {
