@@ -338,6 +338,46 @@ function formatRecordTable(title, rows, columns, emphasis = []) {
   `;
 }
 
+function formatJournalCell(label, value, options = {}) {
+  const classes = ["journal-print-cell"];
+  if (options.wide) classes.push("wide");
+  if (options.emphasis) classes.push("emphasis");
+
+  return `
+    <div class="${classes.join(" ")}">
+      <div class="journal-print-label">${escapeHtml(label)}</div>
+      <div class="journal-print-value">${escapeHtml(value || " ")}</div>
+    </div>
+  `;
+}
+
+function formatJournalSheet(row, title = "치료일지") {
+  const metaItems = ["고유번호", "회기", "상담일자", "상담시간", "상담형태", "상담자", "정서상태"];
+  const contentItems = [
+    ["주호소/주제", true],
+    ["상담 목표", false],
+    ["개입 내용", true],
+    ["내담자 반응", false],
+    ["진전 및 변화", false],
+    ["위험도/특이사항", false],
+    ["과제/권고", false],
+    ["다음 계획", true],
+    ["검사 결과 반영", true],
+  ];
+
+  return `
+    <section class="print-section journal-print-sheet">
+      <h2>${escapeHtml(title)}</h2>
+      <div class="journal-print-grid meta-grid">
+        ${metaItems.map((key) => formatJournalCell(key, row?.[key])).join("")}
+      </div>
+      <div class="journal-print-grid content-grid">
+        ${contentItems.map(([key, emphasis]) => formatJournalCell(key, row?.[key], { wide: true, emphasis })).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function printDocument(title, bodyHtml) {
   const popup = window.open("", "_blank", "width=900,height=700");
   popup.document.write(`
@@ -403,6 +443,48 @@ function printDocument(title, bodyHtml) {
           .journal-table th { background: #f8bfd1; }
           .diagnostic-table th { background: #f2aa57; }
           .archive-table th { background: #d8dee9; }
+          .journal-print-sheet {
+            border: 1px solid #0d1f3a;
+            padding: 12px;
+            background: #ffffff;
+          }
+          .journal-print-grid {
+            display: grid;
+            gap: 0;
+            border-top: 1px solid #aeb8c8;
+            border-left: 1px solid #aeb8c8;
+          }
+          .meta-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 12px;
+          }
+          .content-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .journal-print-cell {
+            min-height: 74px;
+            border-right: 1px solid #aeb8c8;
+            border-bottom: 1px solid #aeb8c8;
+            background: #ffffff;
+          }
+          .journal-print-cell.wide {
+            min-height: 112px;
+          }
+          .journal-print-cell.emphasis .journal-print-value {
+            font-weight: 800;
+          }
+          .journal-print-label {
+            padding: 7px 9px;
+            color: #7d1f50;
+            background: #f8bfd1;
+            font-size: 12px;
+            font-weight: 800;
+          }
+          .journal-print-value {
+            min-height: 42px;
+            padding: 9px;
+            white-space: pre-wrap;
+          }
           .emphasis-row td,
           .solution-box {
             font-weight: 800;
@@ -417,6 +499,7 @@ function printDocument(title, bodyHtml) {
           @media print {
             body { padding: 12mm; }
             .print-section { page-break-inside: avoid; }
+            .journal-print-sheet { page-break-inside: avoid; }
           }
         </style>
       </head>
@@ -446,7 +529,9 @@ function printStructuredDetail() {
 
   const body = [
     formatRecordTable("개인정보 및 초기 상담 신청 내용", [applicant], applicantColumns),
-    formatRecordTable("상담일지", journals, journalColumns, ["주호소/주제", "개입 내용", "다음 계획", "검사 결과 반영"]).replaceAll("print-table", "print-table journal-table"),
+    journals.length
+      ? journals.map((row, index) => formatJournalSheet(row, `상담일지 ${index + 1}`)).join("")
+      : formatRecordTable("상담일지", [], journalColumns).replaceAll("print-table", "print-table journal-table"),
     formatRecordTable("진단도구 및 검사결과", tests, testColumns, ["검사지 종류", "숫자 결과", "결과 요약"]).replaceAll("print-table", "print-table diagnostic-table"),
     formatRecordTable("상담 종료/보존/이관 기록", archive, archiveColumns).replaceAll("print-table", "print-table archive-table"),
     `<section class="print-section"><h2>상담자 상담내용 및 향후 솔루션</h2><div class="solution-box">${escapeHtml(followup)}</div></section>`,
@@ -460,10 +545,7 @@ function printText(title, text) {
 }
 
 function printJournalDocument() {
-  const journalColumns = ["고유번호", "회기", "상담일자", "상담시간", "상담형태", "주호소/주제", "정서상태", "상담 목표", "개입 내용", "내담자 반응", "진전 및 변화", "위험도/특이사항", "과제/권고", "다음 계획", "검사 결과 반영", "상담자"];
-  const table = formatRecordTable("상담일지", [formObject(journalForm)], journalColumns, ["주호소/주제", "개입 내용", "다음 계획", "검사 결과 반영"]).replaceAll("print-table", "print-table journal-table");
-
-  printDocument("치료일지", table);
+  printDocument("치료일지", formatJournalSheet(formObject(journalForm)));
 }
 
 function printFollowupDocument() {

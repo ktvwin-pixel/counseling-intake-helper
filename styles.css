@@ -209,6 +209,44 @@ h1 {
   gap: 18px;
 }
 
+.compact-grid {
+  gap: 12px;
+}
+
+.journal-fieldset {
+  border: 1px solid rgba(217, 79, 140, 0.28);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.84);
+  padding: 14px;
+}
+
+.journal-fieldset legend {
+  width: auto;
+  margin: 0 0 4px;
+  padding: 0 8px;
+  color: #9d235e;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.journal-cell-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.journal-cell-grid label {
+  min-height: 100%;
+  border: 1px solid rgba(217, 79, 140, 0.2);
+  border-radius: var(--radius);
+  background: #fff8fb;
+  padding: 12px;
+}
+
+.journal-cell-grid .wide-cell {
+  grid-column: 1 / -1;
+}
+
 label,
 fieldset {
   display: grid;
@@ -660,6 +698,14 @@ tr:last-child td {
   .related-records {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .journal-cell-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-cell-grid .wide-cell {
+    grid-column: auto;
   }
 }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>관리자 신청자 관리</title>
-    <link rel="stylesheet" href="styles.css?v=20260813-3" />
+    <link rel="stylesheet" href="styles.css?v=20260813-4" />
   </head>
   <body>
     <main class="page-shell">
@@ -95,32 +95,45 @@
                 <h3>치료일지 작성</h3>
                 <form id="journalForm" class="field-stack">
                   <input type="hidden" name="고유번호" />
-                  <div class="field-grid">
-                    <label>회기<input name="회기" type="number" min="1" placeholder="예: 1" required /></label>
-                    <label>상담일자<input name="상담일자" type="date" required /></label>
-                    <label>상담시간<input name="상담시간" placeholder="예: 50분" /></label>
-                    <label>
-                      상담형태
-                      <select name="상담형태">
-                        <option>개인상담</option>
-                        <option>부부/가족상담</option>
-                        <option>아동/청소년상담</option>
-                        <option>전화상담</option>
-                        <option>온라인상담</option>
-                      </select>
-                    </label>
-                    <label>상담자<input name="상담자" /></label>
-                    <label>정서상태<input name="정서상태" placeholder="예: 불안, 우울, 긴장" /></label>
-                  </div>
-                  <label>주호소/주제<textarea name="주호소/주제" rows="3" required></textarea></label>
-                  <label>상담 목표<textarea name="상담 목표" rows="3"></textarea></label>
-                  <label>개입 내용<textarea name="개입 내용" rows="4" required></textarea></label>
-                  <label>내담자 반응<textarea name="내담자 반응" rows="3"></textarea></label>
-                  <label>진전 및 변화<textarea name="진전 및 변화" rows="3"></textarea></label>
-                  <label>위험도/특이사항<textarea name="위험도/특이사항" rows="3"></textarea></label>
-                  <label>과제/권고<textarea name="과제/권고" rows="3"></textarea></label>
-                  <label>다음 계획<textarea name="다음 계획" rows="3"></textarea></label>
-                  <label>검사 결과 반영<textarea name="검사 결과 반영" rows="3" placeholder="검사결과 탭에 입력한 결과 요약을 치료일지에 반영하세요."></textarea></label>
+                  <fieldset class="journal-fieldset">
+                    <legend>기본 정보</legend>
+                    <div class="field-grid compact-grid">
+                      <label>회기<input name="회기" type="number" min="1" placeholder="예: 1" required /></label>
+                      <label>상담일자<input name="상담일자" type="date" required /></label>
+                      <label>상담시간<input name="상담시간" placeholder="예: 50분" /></label>
+                      <label>
+                        상담형태
+                        <select name="상담형태">
+                          <option>개인상담</option>
+                          <option>부부/가족상담</option>
+                          <option>아동/청소년상담</option>
+                          <option>전화상담</option>
+                          <option>온라인상담</option>
+                        </select>
+                      </label>
+                      <label>상담자<input name="상담자" /></label>
+                      <label>정서상태<input name="정서상태" placeholder="예: 불안, 우울, 긴장" /></label>
+                    </div>
+                  </fieldset>
+                  <fieldset class="journal-fieldset">
+                    <legend>상담 내용</legend>
+                    <div class="journal-cell-grid">
+                      <label>주호소/주제<textarea name="주호소/주제" rows="3" required></textarea></label>
+                      <label>상담 목표<textarea name="상담 목표" rows="3"></textarea></label>
+                      <label class="wide-cell">개입 내용<textarea name="개입 내용" rows="4" required></textarea></label>
+                      <label>내담자 반응<textarea name="내담자 반응" rows="3"></textarea></label>
+                      <label>진전 및 변화<textarea name="진전 및 변화" rows="3"></textarea></label>
+                    </div>
+                  </fieldset>
+                  <fieldset class="journal-fieldset">
+                    <legend>평가 및 다음 계획</legend>
+                    <div class="journal-cell-grid">
+                      <label>위험도/특이사항<textarea name="위험도/특이사항" rows="3"></textarea></label>
+                      <label>과제/권고<textarea name="과제/권고" rows="3"></textarea></label>
+                      <label>다음 계획<textarea name="다음 계획" rows="3"></textarea></label>
+                      <label>검사 결과 반영<textarea name="검사 결과 반영" rows="3" placeholder="검사결과 탭에 입력한 결과 요약을 치료일지에 반영하세요."></textarea></label>
+                    </div>
+                  </fieldset>
                   <div class="actions">
                     <button class="secondary-button" type="button" id="copyJournalButton">치료일지 복사</button>
                     <button class="secondary-button" type="button" id="printJournalButton">치료일지 프린트</button>
@@ -227,6 +240,6 @@
     </main>
 
     <script src="config.js?v=20260813-3"></script>
-    <script src="admin.js?v=20260813-4"></script>
+    <script src="admin.js?v=20260813-5"></script>
   </body>
 </html>
