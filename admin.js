@@ -70,6 +70,13 @@ function apiRequest(params) {
     const callbackName = `sheetCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const script = document.createElement("script");
     const url = new URL(config.apiUrl);
+    let timeoutId;
+
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      delete window[callbackName];
+      script.remove();
+    };
 
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.set(key, typeof value === "string" ? value : JSON.stringify(value));
@@ -77,16 +84,19 @@ function apiRequest(params) {
     url.searchParams.set("callback", callbackName);
 
     window[callbackName] = (payload) => {
-      delete window[callbackName];
-      script.remove();
+      cleanup();
       payload?.ok ? resolve(payload) : reject(new Error(payload?.message || "요청을 처리하지 못했습니다."));
     };
 
     script.onerror = () => {
-      delete window[callbackName];
-      script.remove();
+      cleanup();
       reject(new Error("서버 연결에 실패했습니다. Apps Script 웹 앱 액세스 권한을 '모든 사용자'로 설정해 주세요."));
     };
+
+    timeoutId = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("서버 응답이 지연되고 있습니다. 새로고침 후 다시 로그인해 주세요."));
+    }, 20000);
 
     script.src = url.toString();
     document.body.appendChild(script);
