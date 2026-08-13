@@ -21,8 +21,10 @@ const followupForm = document.querySelector("#followupForm");
 const followupMessage = document.querySelector("#followupMessage");
 const buildFollowupButton = document.querySelector("#buildFollowupButton");
 const copyFollowupButton = document.querySelector("#copyFollowupButton");
+const printFollowupButton = document.querySelector("#printFollowupButton");
 const mailFollowupButton = document.querySelector("#mailFollowupButton");
 const testTypeSelect = document.querySelector("#testTypeSelect");
+const logoSrc = "assets/institute-logo.png";
 
 const applicantColumns = [
   "고유번호",
@@ -305,25 +307,38 @@ function updateFollowupMessage() {
   return followupMessage.value;
 }
 
-function printElement(element) {
-  const popup = window.open("", "_blank", "width=900,height=700");
-  popup.document.write(`
-    <!doctype html>
-    <html lang="ko">
-      <head>
-        <meta charset="UTF-8" />
-        <title>상담 기록 출력</title>
-        <link rel="stylesheet" href="styles.css" />
-      </head>
-      <body class="print-page">${element.innerHTML}</body>
-    </html>
-  `);
-  popup.document.close();
-  popup.focus();
-  popup.print();
+function formatRows(row, columns = Object.keys(row || {}), emphasis = []) {
+  const visibleColumns = columns.filter((key) => row?.[key]);
+
+  if (!visibleColumns.length) {
+    return '<tr><td colspan="2" class="empty-print-cell">기록된 내용이 없습니다.</td></tr>';
+  }
+
+  return visibleColumns.map((key) => `
+    <tr class="${emphasis.includes(key) ? "emphasis-row" : ""}">
+      <th>${escapeHtml(key)}</th>
+      <td>${escapeHtml(row[key])}</td>
+    </tr>
+  `).join("");
 }
 
-function printText(title, text) {
+function formatRecordTable(title, rows, columns, emphasis = []) {
+  const records = rows?.length ? rows : [{}];
+
+  return `
+    <section class="print-section">
+      <h2>${escapeHtml(title)}</h2>
+      ${records.map((row, index) => `
+        <table class="print-table">
+          ${rows?.length > 1 ? `<caption>${escapeHtml(title)} ${index + 1}</caption>` : ""}
+          <tbody>${formatRows(row, columns, emphasis)}</tbody>
+        </table>
+      `).join("")}
+    </section>
+  `;
+}
+
+function printDocument(title, bodyHtml) {
   const popup = window.open("", "_blank", "width=900,height=700");
   popup.document.write(`
     <!doctype html>
@@ -332,17 +347,136 @@ function printText(title, text) {
         <meta charset="UTF-8" />
         <title>${escapeHtml(title)}</title>
         <style>
-          body { font-family: "Malgun Gothic", sans-serif; padding: 28px; line-height: 1.6; }
-          h1 { font-size: 22px; margin: 0 0 18px; }
-          pre { white-space: pre-wrap; font: inherit; }
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            padding: 26px;
+            color: #172033;
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            line-height: 1.55;
+            background: #ffffff;
+          }
+          .print-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+            border-bottom: 3px solid #0d1f3a;
+          }
+          .print-logo { width: 220px; max-width: 42%; height: auto; object-fit: contain; }
+          h1 { margin: 0; color: #0d1f3a; font-size: 24px; text-align: right; }
+          h2 {
+            margin: 24px 0 8px;
+            padding: 7px 10px;
+            color: #ffffff;
+            background: #0d1f3a;
+            font-size: 15px;
+          }
+          .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 12px;
+            page-break-inside: avoid;
+          }
+          caption {
+            caption-side: top;
+            padding: 7px 0;
+            color: #41506a;
+            font-weight: 700;
+            text-align: left;
+          }
+          th, td {
+            border: 1px solid #aeb8c8;
+            padding: 8px 10px;
+            vertical-align: top;
+            white-space: pre-wrap;
+            word-break: keep-all;
+          }
+          th {
+            width: 185px;
+            color: #0d1f3a;
+            background: #f7cf59;
+            text-align: left;
+          }
+          .journal-table th { background: #f8bfd1; }
+          .diagnostic-table th { background: #f2aa57; }
+          .archive-table th { background: #d8dee9; }
+          .emphasis-row td,
+          .solution-box {
+            font-weight: 800;
+          }
+          .solution-box {
+            border: 2px solid #0d1f3a;
+            padding: 14px;
+            white-space: pre-wrap;
+            background: #fff8fb;
+          }
+          .empty-print-cell { color: #67748a; text-align: center; }
+          @media print {
+            body { padding: 12mm; }
+            .print-section { page-break-inside: avoid; }
+          }
         </style>
       </head>
-      <body><h1>${escapeHtml(title)}</h1><pre>${escapeHtml(text)}</pre></body>
+      <body>
+        <header class="print-header">
+          <img class="print-logo" src="${logoSrc}" alt="한 예술치료교육연구소" />
+          <h1>${escapeHtml(title)}</h1>
+        </header>
+        ${bodyHtml}
+      </body>
     </html>
   `);
   popup.document.close();
   popup.focus();
   popup.print();
+}
+
+function printStructuredDetail() {
+  const applicant = activeBundle?.applicant || {};
+  const journals = activeBundle?.journals || [];
+  const tests = activeBundle?.tests || [];
+  const archive = activeBundle?.archive || [];
+  const journalColumns = ["일지번호", "고유번호", "회기", "상담일자", "상담시간", "상담형태", "주호소/주제", "정서상태", "상담 목표", "개입 내용", "내담자 반응", "진전 및 변화", "위험도/특이사항", "과제/권고", "다음 계획", "검사 결과 반영", "상담자", "작성일시", "수정일시", "보존상태"];
+  const testColumns = ["검사번호", "고유번호", "검사지 종류", "사용 여부", "검사일", "결과 입력 방식", "숫자 결과", "이미지/파일 URL", "결과 요약", "작성일시"];
+  const archiveColumns = ["처리번호", "고유번호", "처리일시", "처리유형", "보존 여부", "이관 대상", "비고", "관리자"];
+  const followup = followupMessage.value || buildFollowupText();
+
+  const body = [
+    formatRecordTable("개인정보 및 초기 상담 신청 내용", [applicant], applicantColumns),
+    formatRecordTable("상담일지", journals, journalColumns, ["주호소/주제", "개입 내용", "다음 계획", "검사 결과 반영"]).replaceAll("print-table", "print-table journal-table"),
+    formatRecordTable("진단도구 및 검사결과", tests, testColumns, ["검사지 종류", "숫자 결과", "결과 요약"]).replaceAll("print-table", "print-table diagnostic-table"),
+    formatRecordTable("상담 종료/보존/이관 기록", archive, archiveColumns).replaceAll("print-table", "print-table archive-table"),
+    `<section class="print-section"><h2>상담자 상담내용 및 향후 솔루션</h2><div class="solution-box">${escapeHtml(followup)}</div></section>`,
+  ].join("");
+
+  printDocument(`상담 기록 출력 - ${applicant["고유번호"] || activeId || ""}`, body);
+}
+
+function printText(title, text) {
+  printDocument(title, `<section class="print-section"><div class="solution-box">${escapeHtml(text)}</div></section>`);
+}
+
+function printJournalDocument() {
+  const journalColumns = ["고유번호", "회기", "상담일자", "상담시간", "상담형태", "주호소/주제", "정서상태", "상담 목표", "개입 내용", "내담자 반응", "진전 및 변화", "위험도/특이사항", "과제/권고", "다음 계획", "검사 결과 반영", "상담자"];
+  const table = formatRecordTable("상담일지", [formObject(journalForm)], journalColumns, ["주호소/주제", "개입 내용", "다음 계획", "검사 결과 반영"]).replaceAll("print-table", "print-table journal-table");
+
+  printDocument("치료일지", table);
+}
+
+function printFollowupDocument() {
+  const applicant = activeBundle?.applicant || {};
+  const body = `
+    ${formatRecordTable("내담자 정보", [applicant], ["고유번호", "성명", "연락처", "이메일", "상담상태"])}
+    <section class="print-section">
+      <h2>다음 상담 일정 및 솔루션 안내</h2>
+      <div class="solution-box">${escapeHtml(updateFollowupMessage())}</div>
+    </section>
+  `;
+
+  printDocument("다음 상담 일정 및 솔루션 안내", body);
 }
 
 loginForm.addEventListener("submit", async (event) => {
@@ -437,12 +571,13 @@ closeForm.addEventListener("submit", async (event) => {
 });
 
 copyDetailButton.addEventListener("click", () => copyText(detailText()));
-printDetailButton.addEventListener("click", () => printElement(document.querySelector("#printArea")));
+printDetailButton.addEventListener("click", printStructuredDetail);
 document.querySelector("#copyJournalButton").addEventListener("click", () => copyText(journalText()));
-document.querySelector("#printJournalButton").addEventListener("click", () => printText("치료일지", journalText()));
+document.querySelector("#printJournalButton").addEventListener("click", printJournalDocument);
 
 buildFollowupButton.addEventListener("click", updateFollowupMessage);
 copyFollowupButton.addEventListener("click", () => copyText(updateFollowupMessage()));
+printFollowupButton.addEventListener("click", printFollowupDocument);
 mailFollowupButton.addEventListener("click", () => {
   const applicant = activeBundle?.applicant || {};
   const email = applicant["이메일"];
