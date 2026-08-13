@@ -233,7 +233,10 @@ function renderJournalCard(row) {
       <strong>${escapeHtml(row["상담일자"])} ${escapeHtml(row["회기"])}회기</strong>
       <p>${escapeHtml(row["주호소/주제"])}</p>
       <p>${escapeHtml(row["검사 결과 반영"])}</p>
-      <button class="text-button edit-journal-button" type="button">이 일지 수정/보완</button>
+      <div class="mini-record-actions">
+        <button class="text-button edit-journal-button" type="button">이 일지 수정/보완</button>
+        <button class="text-button danger-text-button delete-journal-button" type="button">삭제</button>
+      </div>
     </article>
   `;
 }
@@ -641,6 +644,30 @@ recordsBody.addEventListener("click", (event) => {
 });
 
 relatedRecords.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest(".delete-journal-button");
+  if (deleteButton) {
+    const card = deleteButton.closest("[data-journal]");
+    if (!card) return;
+
+    const row = JSON.parse(decodeURIComponent(card.dataset.journal));
+    const journalId = row["일지번호"];
+    const label = `${row["상담일자"] || ""} ${row["회기"] || ""}회기`.trim();
+    if (!journalId) {
+      alert("삭제할 치료일지 번호를 찾을 수 없습니다.");
+      return;
+    }
+    if (!confirm(`${label || "선택한 치료일지"}를 삭제하시겠습니까?`)) return;
+
+    deleteButton.disabled = true;
+    apiRequest({ action: "deleteJournal", token: getToken(), journalId })
+      .then(() => showDetail(activeId))
+      .catch((error) => {
+        alert(error.message);
+        deleteButton.disabled = false;
+      });
+    return;
+  }
+
   const editButton = event.target.closest(".edit-journal-button");
   if (!editButton) return;
 

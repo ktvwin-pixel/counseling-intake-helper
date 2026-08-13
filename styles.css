@@ -552,6 +552,17 @@ tr:last-child td {
   text-decoration: underline;
 }
 
+.danger-text-button {
+  color: #b3261e;
+}
+
+.mini-record-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .detail-panel {
   display: grid;
   gap: 14px;

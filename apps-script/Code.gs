@@ -145,6 +145,7 @@ function doGet(e) {
     else if (params.action === 'saveTest') payload = saveTest_(params);
     else if (params.action === 'closeCase') payload = closeCase_(params);
     else if (params.action === 'delete') payload = deleteApplicants_(params);
+    else if (params.action === 'deleteJournal') payload = deleteJournal_(params);
     else if (params.action === 'emailExcel') payload = emailExcel_(params);
     else if (params.action === 'testTypes') payload = { testTypes: TEST_TYPES };
     else throw new Error('지원하지 않는 작업입니다.');
@@ -268,6 +269,16 @@ function deleteApplicants_(params) {
   removeRowsByIds_(SHEETS.journals, '고유번호', ids);
   removeRowsByIds_(SHEETS.tests, '고유번호', ids);
   ids.forEach((id) => trashApplicantFolder_(id));
+  return { deleted };
+}
+
+function deleteJournal_(params) {
+  requireAdmin_(params.token);
+  const journalId = params.journalId;
+  if (!journalId) throw new Error('삭제할 치료일지 번호가 필요합니다.');
+
+  const deleted = removeRowsByIds_(SHEETS.journals, '일지번호', [String(journalId)]);
+  if (!deleted) throw new Error('삭제할 치료일지를 찾을 수 없습니다.');
   return { deleted };
 }
 
