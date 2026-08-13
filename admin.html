@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>관리자 신청자 관리</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260813-3" />
   </head>
   <body>
     <main class="page-shell">
@@ -79,7 +79,7 @@
           </table>
         </div>
 
-        <article id="detailPanel" class="detail-panel" hidden>
+        <article id="detailPanel" class="detail-panel personal-section" hidden>
           <div class="detail-heading">
             <h2>상세 정보</h2>
             <div class="actions">
@@ -91,7 +91,7 @@
             <dl id="detailList"></dl>
 
             <section class="admin-workspace">
-              <div class="workspace-section">
+              <div class="workspace-section journal-section">
                 <h3>치료일지 작성</h3>
                 <form id="journalForm" class="field-stack">
                   <input type="hidden" name="고유번호" />
@@ -129,7 +129,7 @@
                 </form>
               </div>
 
-              <div class="workspace-section">
+              <div class="workspace-section diagnostic-section">
                 <h3>검사 결과 입력</h3>
                 <form id="testForm" class="field-stack">
                   <input type="hidden" name="고유번호" />
@@ -161,6 +161,34 @@
                   <label>결과 요약<textarea name="결과 요약" rows="4"></textarea></label>
                   <div class="actions">
                     <button class="primary-button" type="submit">검사 결과 저장</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="workspace-section followup-section">
+                <h3>다음 상담 안내 및 솔루션 회신</h3>
+                <form id="followupForm" class="field-stack">
+                  <div class="field-grid">
+                    <label>다음 상담일<input name="nextDate" type="date" /></label>
+                    <label>상담 시간<input name="nextTime" placeholder="예: 오후 2:00 / 50분" /></label>
+                    <label>
+                      상담 방식
+                      <select name="method">
+                        <option>대면상담</option>
+                        <option>전화상담</option>
+                        <option>온라인상담</option>
+                        <option>추후 협의</option>
+                      </select>
+                    </label>
+                    <label>담당자<input name="counselor" placeholder="예: 오선미" /></label>
+                  </div>
+                  <label>오늘 상담 요약<textarea name="summary" rows="3" placeholder="당일 상담에서 확인한 핵심 내용을 간단히 정리하세요."></textarea></label>
+                  <label>다음 회기 전 솔루션/과제<textarea name="solution" rows="4" placeholder="내담자가 다음 만남 전 참고하거나 실천할 내용을 간단히 작성하세요."></textarea></label>
+                  <textarea id="followupMessage" class="copy-output" rows="8" readonly></textarea>
+                  <div class="actions">
+                    <button class="secondary-button" type="button" id="buildFollowupButton">안내문 생성</button>
+                    <button class="secondary-button" type="button" id="copyFollowupButton">안내문 복사</button>
+                    <button class="primary-button" type="button" id="mailFollowupButton">메일로 회신</button>
                   </div>
                 </form>
               </div>
@@ -197,7 +225,7 @@
       </section>
     </main>
 
-    <script src="config.js?v=20260813-2"></script>
-    <script src="admin.js?v=20260813-2"></script>
+    <script src="config.js?v=20260813-3"></script>
+    <script src="admin.js?v=20260813-3"></script>
   </body>
 </html>

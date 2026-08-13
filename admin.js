@@ -17,6 +17,11 @@ const printDetailButton = document.querySelector("#printDetailButton");
 const journalForm = document.querySelector("#journalForm");
 const testForm = document.querySelector("#testForm");
 const closeForm = document.querySelector("#closeForm");
+const followupForm = document.querySelector("#followupForm");
+const followupMessage = document.querySelector("#followupMessage");
+const buildFollowupButton = document.querySelector("#buildFollowupButton");
+const copyFollowupButton = document.querySelector("#copyFollowupButton");
+const mailFollowupButton = document.querySelector("#mailFollowupButton");
 const testTypeSelect = document.querySelector("#testTypeSelect");
 
 const applicantColumns = [
@@ -270,6 +275,36 @@ function journalText() {
   return Object.entries(data).filter(([, value]) => value).map(([key, value]) => `${key}: ${value}`).join("\n");
 }
 
+function buildFollowupText() {
+  const applicant = activeBundle?.applicant || {};
+  const data = formObject(followupForm);
+  const name = applicant["성명"] || "내담자";
+  const nextParts = [data.nextDate, data.nextTime, data.method].filter(Boolean).join(" / ") || "추후 안내";
+  const counselor = data.counselor || "상담자";
+
+  return [
+    `${name}님께`,
+    "",
+    "오늘 상담에 참여해 주셔서 감사합니다.",
+    `다음 상담 일정: ${nextParts}`,
+    `담당: ${counselor}`,
+    "",
+    "[오늘 상담 요약]",
+    data.summary || "오늘 상담에서 나눈 주요 내용을 바탕으로 다음 회기를 준비하겠습니다.",
+    "",
+    "[다음 상담 전 참고하실 내용]",
+    data.solution || "무리하지 않는 범위에서 오늘 정리한 내용을 일상에서 천천히 살펴봐 주세요.",
+    "",
+    "변경이 필요하시면 기관으로 연락 부탁드립니다.",
+    "한 예술치료교육연구소",
+  ].join("\n");
+}
+
+function updateFollowupMessage() {
+  followupMessage.value = buildFollowupText();
+  return followupMessage.value;
+}
+
 function printElement(element) {
   const popup = window.open("", "_blank", "width=900,height=700");
   popup.document.write(`
@@ -405,6 +440,22 @@ copyDetailButton.addEventListener("click", () => copyText(detailText()));
 printDetailButton.addEventListener("click", () => printElement(document.querySelector("#printArea")));
 document.querySelector("#copyJournalButton").addEventListener("click", () => copyText(journalText()));
 document.querySelector("#printJournalButton").addEventListener("click", () => printText("치료일지", journalText()));
+
+buildFollowupButton.addEventListener("click", updateFollowupMessage);
+copyFollowupButton.addEventListener("click", () => copyText(updateFollowupMessage()));
+mailFollowupButton.addEventListener("click", () => {
+  const applicant = activeBundle?.applicant || {};
+  const email = applicant["이메일"];
+  const body = encodeURIComponent(updateFollowupMessage());
+  const subject = encodeURIComponent("다음 상담 일정 및 안내");
+
+  if (!email) {
+    alert("신청자 이메일이 없어 안내문 복사를 이용해 주세요.");
+    return;
+  }
+
+  window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+});
 
 logoutButton.addEventListener("click", () => {
   sessionStorage.removeItem("hanAdminToken");
