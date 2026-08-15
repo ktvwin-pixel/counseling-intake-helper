@@ -3,6 +3,7 @@ const loginPanel = document.querySelector("#loginPanel");
 const recordsPanel = document.querySelector("#recordsPanel");
 const loginForm = document.querySelector("#adminLoginForm");
 const loginMessage = document.querySelector("#loginMessage");
+const operatorInfo = document.querySelector("#operatorInfo");
 const recordsBody = document.querySelector("#recordsBody");
 const detailPanel = document.querySelector("#detailPanel");
 const detailList = document.querySelector("#detailList");
@@ -28,6 +29,8 @@ const logoSrc = "assets/institute-logo.png";
 
 const applicantColumns = [
   "고유번호",
+  "운영자 고유번호",
+  "운영자명",
   "작성 일시",
   "상담상태",
   "성명",
@@ -122,6 +125,16 @@ function getToken() {
   return sessionStorage.getItem("hanAdminToken");
 }
 
+function getOperator() {
+  const raw = sessionStorage.getItem("hanOperator");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
+}
+
 function setStatus(message, type = "info") {
   loginMessage.textContent = message;
   loginMessage.dataset.type = type;
@@ -134,6 +147,8 @@ function selectedIds() {
 function renderRecords() {
   selectAll.checked = false;
   emailButton.disabled = true;
+  const operator = getOperator();
+  if (operatorInfo) operatorInfo.textContent = operator ? `${operator.id} · ${operator.name} 전용 내담자 기록입니다.` : "";
 
   if (!records.length) {
     recordsBody.innerHTML = `<tr><td colspan="10" class="empty-cell">저장된 신청 기록이 없습니다.</td></tr>`;
@@ -163,6 +178,7 @@ async function loadRecords() {
   const payload = await apiRequest({ action: "list", token: getToken() });
   records = payload.records || [];
   testTypes = payload.testTypes || testTypes;
+  if (payload.operator) sessionStorage.setItem("hanOperator", JSON.stringify(payload.operator));
   fillTestOptions();
   renderRecords();
 }
@@ -632,6 +648,7 @@ loginForm.addEventListener("submit", async (event) => {
       password: document.querySelector("#adminPassword").value,
     });
     sessionStorage.setItem("hanAdminToken", payload.token);
+    if (payload.operator) sessionStorage.setItem("hanOperator", JSON.stringify(payload.operator));
     showAdmin();
   } catch (error) {
     setStatus(error.message, "error");
@@ -760,6 +777,7 @@ mailFollowupButton.addEventListener("click", () => {
 
 logoutButton.addEventListener("click", () => {
   sessionStorage.removeItem("hanAdminToken");
+  sessionStorage.removeItem("hanOperator");
   location.reload();
 });
 

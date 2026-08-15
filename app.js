@@ -6,10 +6,11 @@ const submitMessage = document.querySelector("#submitMessage");
 const config = window.APP_CONFIG || {};
 const recipient = config.recipient || "hanart73@gmail.com";
 const accessCode = config.accessCode || "";
+const params = new URLSearchParams(window.location.search);
+const operatorId = (params.get("operator") || params.get("op") || config.defaultOperatorId || "OP01").trim().toUpperCase();
 
 function hasValidAccessCode() {
   if (!accessCode) return true;
-  const params = new URLSearchParams(window.location.search);
   return params.get("code") === accessCode;
 }
 
@@ -52,6 +53,7 @@ function collectFormData() {
     hour: "2-digit",
     minute: "2-digit",
   });
+  grouped["운영자 고유번호"] = operatorId;
 
   return grouped;
 }
@@ -80,6 +82,7 @@ function buildSummary() {
   const data = collectFormData();
   const sectionOrder = [
     "고유번호",
+    "운영자 고유번호",
     "작성 일시",
     "성명",
     "연락처",
